@@ -1,14 +1,16 @@
 import requests, bs4, telebot
 
 def parce_weather(city):
-        if city == 'мшинская':
-                site = requests.get("https://meteo7.ru/forecast/59828")
-        elif city == 'приморск':
-                site = requests.get("https://meteo7.ru/forecast/76628")
-        parse = bs4.BeautifulSoup(site.text, "html.parser")
-        weather = parse.select('.textForecast')
-        pogoda3 = weather[1].getText()
-        return pogoda3
+	if city == 'мшинская':
+		site = requests.get("https://meteo7.ru/forecast/59828")
+	elif city == 'приморск':
+		site = requests.get("https://meteo7.ru/forecast/76628")
+	parse = bs4.BeautifulSoup(site.text, "html.parser")
+	weather = parse.select('.textForecast')
+	pogoda = weather[1].getText()
+	pogodalist = pogoda.split('. ')
+	result = '\n'.join(pogodalist)
+	return result
 
 bot = telebot.TeleBot("505752923:AAFkeLE4JlmWTOWDhLaYQY79YqrVoSG-vM0")
 
