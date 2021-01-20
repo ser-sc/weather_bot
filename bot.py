@@ -12,9 +12,14 @@ def parce_weather(city):
 
 bot = telebot.TeleBot("505752923:AAFkeLE4JlmWTOWDhLaYQY79YqrVoSG-vM0")
 
+keyboard1 = telebot.types.ReplyKeyboardMarkup()
+keyboard1.row('Мшинская', 'Приморск')
+
+
 @bot.message_handler(commands=['start', 'help'])
 def send_welcome(message):
-	bot.reply_to(message, "Howdy, how are you doing?")
+#	bot.reply_to(message, "Howdy, how are you doing?")
+	bot.send_message(message.chat.id, 'Привет',reply_markup=keyboard1)
 
 #@bot.message_handler(func=lambda message: True)
 #def echo_all(message):
