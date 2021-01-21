@@ -15,7 +15,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
+      run: docker build . --file Dockerfile --tag my-python-bot:$(date +%s)
 
   push_to_registry:
     name: Push Docker image to GitHub Packages
@@ -29,5 +29,5 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
           registry: docker.pkg.github.com
-          repository: ser-sc/weather_bot/my-image-name:latest
+          repository: ser-sc/weather_bot/my-python-bot:latest
           tag_with_ref: true
