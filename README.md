@@ -6,6 +6,6 @@
 
 Docker:
 docker build -t my-python-bot .
-docker run -it --rm --name my-running-app my-python-bot
-sudo docker run --restart=always -d my-python-bot
+docker run -d --rm --name my-running-app my-python-bot
+docker run --restart=always -d my-python-bot
 
