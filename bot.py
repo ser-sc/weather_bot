@@ -12,7 +12,13 @@ def parce_weather(city):
 	result = '\n'.join(pogodalist)
 	return result
 
-bot = telebot.TeleBot("505752923:AAFkeLE4JlmWTOWDhLaYQY79YqrVoSG-vM0")
+f = open('bot.token')
+token = f.read()
+f.close()
+token = token[:-1]
+#print(token)
+bot = telebot.TeleBot(token)
+
 
 keyboard1 = telebot.types.ReplyKeyboardMarkup()
 keyboard1.row('Мшинская', 'Приморск')
