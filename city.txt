@@ -1,4 +1,6 @@
 
-мшинская https://meteo7.ru/forecast/59828
-приморск https://meteo7.ru/forecast/76628
-победа https://meteo7.ru/forecast/622578
+МШИНСКАЯ https://meteo7.ru/forecast/59828
+ПРИМОРСК https://meteo7.ru/forecast/76628
+ПОБЕДА https://meteo7.ru/forecast/622578
+ПЕТРОЗАВОДСК https://meteo7.ru/forecast/72223
+ВЫБОРГ https://meteo7.ru/forecast/17920
