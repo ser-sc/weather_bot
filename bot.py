@@ -1,15 +1,22 @@
 import requests, bs4, telebot
+import module
 
 def parce_weather(city):
-	if city == 'мшинская':
-		site = requests.get("https://meteo7.ru/forecast/59828")
-	elif city == 'приморск':
-		site = requests.get("https://meteo7.ru/forecast/76628")
-	parse = bs4.BeautifulSoup(site.text, "html.parser")
-	weather = parse.select('.textForecast')
-	pogoda = weather[1].getText()
-	pogodalist = pogoda.split('. ')
-	result = '\n'.join(pogodalist)
+	link = module.getlink(city)
+	keycity = []
+	for item in dict.keys(module.getdict()):
+	        keycity.append(item)
+
+	if link:
+		site = requests.get(link)
+		parse = bs4.BeautifulSoup(site.text, "html.parser")
+		weather = parse.select('.textForecast')
+		pogoda = weather[1].getText()
+		pogodalist = pogoda.split('. ')
+		result = '\n'.join(pogodalist)
+	else:
+		result = 'Ошибка! введите город из списка: '
+		result = result + str(keycity)
 	return result
 
 f = open('bot.token')
@@ -21,25 +28,34 @@ bot = telebot.TeleBot(token)
 
 
 keyboard1 = telebot.types.ReplyKeyboardMarkup()
-keyboard1.row('Мшинская', 'Приморск')
+#keyboard1.row('Погода')
+keyboard1.row('Мшинская', 'Победа', 'Приморск')
+#keycity = []
+#for item in dict.keys(module.getdict()):
+#	
+ #       keycity.append(item)
+#keyboard1.row(keycity)
 
 
 @bot.message_handler(commands=['start', 'help'])
 def send_welcome(message):
-#	bot.reply_to(message, "Howdy, how are you doing?")
 	bot.send_message(message.chat.id, 'Привет',reply_markup=keyboard1)
+ #       bot.send_message(message.chat.id, 'Привет')
 
-#@bot.message_handler(func=lambda message: True)
-#def echo_all(message):
-#	bot.reply_to(message, message.text)
 
 @bot.message_handler(content_types=['text'])
 def send_text(message):
-	if message.text.lower() == 'мшинская':
-        	bot.send_message(message.chat.id, parce_weather('мшинская'))
-	elif message.text.lower() == 'приморск':
-		bot.send_message(message.chat.id, parce_weather('приморск'))
+	bot.send_message(message.chat.id, parce_weather(message.text.lower()))
 
+
+
+#@bot.message_handler(content_types=['Погода'])
+#def send_message(message):
+#	markup = telebot.types.InlineKeyboardMarkup()
+#	markup.add(telebot.types.InlineKeyboardButton(text='Три', callback_data=3))
+#	markup.add(telebot.types.InlineKeyboardButton(text='Четыре', callback_data=4))
+#	markup.add(telebot.types.InlineKeyboardButton(text='Пять', callback_data=5))
+#	bot.send_message(message.chat.id, text="Какая средняя оценка была у Вас в школе?",reply_markup=markup)
 
 
 bot.polling()
