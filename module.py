@@ -23,10 +23,16 @@ def getlink(city):
 	return link
 
 if __name__ == "__main__":
-	print(getdict())
-	city = 'приморск'
-	print(getlink(city))
-	keycity = []
-	for item in dict.keys(getdict()):
-		keycity.append(item)
-	print(keycity)
+#	print(getdict())
+	dict = getdict()
+#	city = 'приморск'
+#	print(getlink(city))
+#	keycity = []
+#	for item in dict.keys(getdict()):
+#		keycity.append(item)
+#	print(keycity)
+	print(dict)
+#	list = []
+#	print(len(dict.items()))
+#	list.append(dict.items())
+#	print(list)
