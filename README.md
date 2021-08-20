@@ -9,3 +9,6 @@ docker build -t my-python-bot .
 docker run -d --rm --name my-running-app my-python-bot
 docker run --restart=always -d my-python-bot
 
+ 
+# bot.token
+Для создания бота и\или получения токена смотри инструкцию https://sendpulse.com/ru/knowledge-base/chatbot/create-telegram-chatbot
