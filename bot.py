@@ -1,4 +1,4 @@
-import requests, bs4, telebot, module
+import requests, bs4, telebot, module, os
 
 def parce_weather(city):
 	link = module.getlink(city)
@@ -18,10 +18,7 @@ def parce_weather(city):
 		result = result + str(keycity)
 	return result
 
-f = open('bot.token')
-token = f.read()
-f.close()
-token = token[:-1]
+token = os.environ['BOT_TOKEN']
 bot = telebot.TeleBot(token)
 
 
