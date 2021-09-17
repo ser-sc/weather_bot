@@ -1,12 +1,15 @@
-import module
-import os
-import telebot
+from telebot import TeleBot, types
+from module import parsing_weather, get_dictionary_of_city
+from settings import get_token
 
-token = os.environ['BOT_TOKEN']
-bot = telebot.TeleBot(token)
+# Основной модуль, инициализирует работу бота прогноза погоды
 
-keyboard1 = telebot.types.ReplyKeyboardMarkup()
-for item in dict.keys(module.get_dictionary_of_city()):
+
+# Инициализация токена бота
+bot = TeleBot(get_token())
+
+keyboard1 = types.ReplyKeyboardMarkup()
+for item in dict.keys(get_dictionary_of_city()):
     keyboard1.row(item)
 
 
@@ -17,7 +20,7 @@ def send_welcome(message):
 
 @bot.message_handler(content_types=['text'])
 def send_text(message):
-    bot.send_message(message.chat.id, module.parsing_weather(message.text.upper()), reply_markup=keyboard1)
+    bot.send_message(message.chat.id, parsing_weather(message.text.upper()), reply_markup=keyboard1)
 
 
 bot.polling()
