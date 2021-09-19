@@ -7,13 +7,13 @@ services:
     container_name: weather_bot
     restart: always
     environment:
-      BOT_TOKEN: <токен бота без ковычек>
+      BOT_TOKEN: <токен бота без кавычек>
       WEATHER_SOURCE: https://meteo7.ru/forecast/
-      POSTGRES_PASSWORD: weather_bot
-      POSTGRES_USER: weather_bot
-      POSTGRES_DB: weather_bot
-      DATABASE_HOST: weather_bot_db
-      DATABASE_PORT: 5432
+      DB_NAME: weather_bot
+      DB_USER: weather_bot
+      DB_PASS: weather_bot
+      DB_HOST: weather_bot_db
+      DB_PORT: 5432
 
     depends_on:
       - weather_bot_db
@@ -23,16 +23,23 @@ services:
   weather_bot_db:
     image: postgres:latest
     container_name: weather_bot_db
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-q", "-d", "postgres", "-U", "root" ]
+      timeout: 45s
+      interval: 10s
+      retries: 10
     restart: always
     volumes:
       # инициализируем создание необходимых таблиц и данных в БД
-      - ./initdb.sh:/docker-entrypoint-initdb.d/initdb.sh
+      - ./database:/docker-entrypoint-initdb.d/
       # создаем внешнее хранилище данных для БД
       - postgres_data_weather_bot:/var/lib/postgresql/data/
     environment:
-      POSTGRES_PASSWORD: weather_bot
-      POSTGRES_USER: weather_bot
-      POSTGRES_DB: weather_bot
+      POSTGRES_PASSWORD: root
+      POSTGRES_USER: password
+      APP_DB_NAME: weather_bot
+      APP_DB_USER: weather_bot
+      APP_DB_PASS: weather_bot
       # порт target обязательно должен быть 5432, т.к. это порт ДБ внутри контейнера
       # наружу выставлен порт 5434 для избегания конфликтов с локальной ДБ
     ports:
