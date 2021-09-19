@@ -1,4 +1,4 @@
 pyTelegramBotAPI
 requests
-bs4 
-
+bs4
+psycopg2

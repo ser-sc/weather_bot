@@ -1,38 +1,32 @@
-def getdict():
-	file = open('city.txt', encoding="utf-8")
-	file.read(1)
-	onstring = file.read().split("\n")
-	onstring = onstring[:-1]
-#	print(onstring)
-	file.close()
-	dictcity = dict()
+import bs4
+import requests
+from dbconnect import Database
 
-	for item in onstring:
-		key = item.split(" ")[0]
-		value = item.split(" ")[1]
-		dictcity[key] = value
-#		print(dictcity)
-	return dictcity
+# Модуль содержит методы, которые возвращают данные для бота, после обращения к БД
+# Все обращения к БД выполняются в рамках методов этого модуля и не выносятся наружу
 
-def getlink(city):
-	dictcity = getdict()
-	if city in dictcity:
-		link = dictcity[city]
-	else:
-		link = None
-	return link
+# Создаем конекшен к БД, далее в рамках него будем выполнять запросы
+db = Database()
 
-if __name__ == "__main__":
-#	print(getdict())
-	dict = getdict()
-#	city = 'приморск'
-#	print(getlink(city))
-#	keycity = []
-#	for item in dict.keys(getdict()):
-#		keycity.append(item)
-#	print(keycity)
-	print(dict)
-#	list = []
-#	print(len(dict.items()))
-#	list.append(dict.items())
-#	print(list)
+
+# Метод получения прогноза погоды и преобразования его в читаемому формату
+def parsing_weather(city_name):
+    dictionary_of_city = db.get_dict_of_city_db()
+    if city_name in dictionary_of_city:
+        city_link = db.get_city_link_db(city_name)
+        site = requests.get(city_link)
+        parse = bs4.BeautifulSoup(site.text, "html.parser")
+        weather = parse.select('.textForecast')
+        weather_list = weather[-1].getText()
+        result = '\n'.join(weather_list.split('. '))
+    else:
+        result = 'Ошибка! введите город из списка: '
+        result = result + str(list(dictionary_of_city.keys()))
+    return result
+
+
+# Метод получения справочника городов, справочник содержи записи ‘ключ’: ’значение’ вида:
+# ‘Имя города’: ‘ИД города на сайте погоды’
+def get_dictionary_of_city():
+    result = db.get_dict_of_city_db()
+    return result
