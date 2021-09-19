@@ -1,2 +1,4 @@
 bot.token
 __pycache__/
+.idea/
+venv/

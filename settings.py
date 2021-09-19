@@ -16,25 +16,25 @@ def get_weather_source():
 
 
 def get_db_name():
-    result = environ['POSTGRES_DB']
+    result = environ['DB_NAME']
     return result
 
 
 def get_db_user_name():
-    result = environ['POSTGRES_USER']
+    result = environ['DB_USER']
     return result
 
 
 def get_db_password():
-    result = environ['POSTGRES_PASSWORD']
+    result = environ['DB_PASS']
     return result
 
 
 def get_db_host():
-    result = environ['DATABASE_HOST']
+    result = environ['DB_HOST']
     return result
 
 
 def get_db_port():
-    result = environ['DATABASE_PORT']
+    result = environ['DB_PORT']
     return result
