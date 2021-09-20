@@ -35,8 +35,9 @@ services:
       # создаем внешнее хранилище данных для БД
       - postgres_data_weather_bot:/var/lib/postgresql/data/
     environment:
-      POSTGRES_PASSWORD: root
-      POSTGRES_USER: password
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
       APP_DB_NAME: weather_bot
       APP_DB_USER: weather_bot
       APP_DB_PASS: weather_bot

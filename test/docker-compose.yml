@@ -9,8 +9,9 @@ services:
       - ../database:/docker-entrypoint-initdb.d/
       - postgres_data_weather_bot_test:/var/lib/postgresql/data/
     environment:
-      POSTGRES_PASSWORD: root
-      POSTGRES_USER: password
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
       APP_DB_NAME: test_weather_bot
       APP_DB_USER: test_weather_bot
       APP_DB_PASS: test_weather_bot
