@@ -1,4 +1,4 @@
-from typing import Dict, Any
+pfrom typing import Dict, Any
 
 import bs4
 import requests
