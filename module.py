@@ -1,9 +1,6 @@
-from typing import Dict, Any
-
 import bs4
 import requests
 from dbconnect import Database
-from settings import get_weather_source
 
 # Модуль содержит методы, которые возвращают данные для бота, после обращения к БД
 # Все обращения к БД выполняются в рамках методов этого модуля и не выносятся наружу
@@ -14,19 +11,17 @@ db = Database()
 
 # Метод получения прогноза погоды и преобразования его в читаемому формату
 def parsing_weather(city_name: str):
-    dictionary_of_city = db.get_dict_of_city_db()
-    # Словарь и имя переводим в верхний регистр, чтобы он не учитывался
-    dictionary_of_city = dict((name.upper(), city_id) for name, city_id in dictionary_of_city.items())
-    if city_name.upper() in dictionary_of_city:
-        city_link = get_city_link(city_name, dictionary_of_city)
+    city_link = db.get_city_link_db(city_name)
+    if city_link:
         site = requests.get(city_link)
         parse = bs4.BeautifulSoup(site.text, "html.parser")
         weather = parse.select('.textForecast')
         weather_list = weather[-1].getText()
         result = '\n'.join(weather_list.split('. '))
     else:
-        result = 'Ошибка! введите город из списка: '
-        result = result + str(list(dictionary_of_city.keys()))
+        # result = 'Ошибка! введите город из списка: '
+        # result = result + str(list(dictionary_of_city.keys()))
+        result = 'Ошибка! Указанного города нет в справочнике.'
     return result
 
 
@@ -37,9 +32,10 @@ def get_dictionary_of_city():
     return result
 
 
-# Метод получения ссылки на прогноз погоды города city_name из справочника городов dictionary_of_city
-# Поиск осуществляется без учета регистра
-def get_city_link(city_name: str, dictionary_of_city: dict):
-    dictionary_of_city = dict((name.lower(), city_id) for name, city_id in dictionary_of_city.items())
-    result = get_weather_source() + str(dictionary_of_city.get(city_name.lower()))
+def get_favourite_list(chat_id: int):
+    if db.check_chat_id_db(chat_id):
+        result = db.get_favourite_list_db(chat_id)
+    else:
+        db.set_default_favourite_list_db(chat_id)
+        result = db.get_favourite_list_db(chat_id)
     return result

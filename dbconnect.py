@@ -25,7 +25,7 @@ class Database:
         except (Exception, psycopg2.DatabaseError) as error:
             print(f" Lost connection. The error '{error}' occurred.")
 
-    def __execute_read_query(self, query, parameters=None):
+    def __execute_read_query_all(self, query: str, parameters: dict = None):
         try:
             self.__cursor.execute(query, parameters)
             result = self.__cursor.fetchall()
@@ -34,15 +34,63 @@ class Database:
             print(f"Rollback transaction. The error '{error}' occurred.")
             self.__connection.rollback()
 
-    def get_city_link_db(self, city_name):
-        query = "select city_id from city where name = %(city_name)s;"
-        parameter = {'city_name': city_name, }
-        city_link_id = self.__execute_read_query(query, parameter)
-        result = get_weather_source() + str(city_link_id[0][0])
+    def __execute_read_query_one(self, query: str, parameters: dict = None):
+        try:
+            self.__cursor.execute(query, parameters)
+            result = self.__cursor.fetchone()
+            return result
+        except (Exception, psycopg2.DatabaseError) as error:
+            print(f"Rollback transaction. The error '{error}' occurred.")
+            self.__connection.rollback()
+
+    def __execute_insert_query_one(self, query: str, parameters: dict = None):
+        try:
+            self.__cursor.execute(query, parameters)
+            self.__connection.commit()
+            result = True
+            return result
+        except (Exception, psycopg2.DatabaseError) as error:
+            print(f"Rollback transaction. The error '{error}' occurred.")
+            self.__connection.rollback()
+
+    def get_city_link_db(self, city_name: str):
+        query = "select city_id from city where lower(name) = %(city_name)s;"
+        parameter = {'city_name': city_name.lower(), }
+        city_link_id = self.__execute_read_query_one(query, parameter)
+        if city_link_id is not None:
+            result = get_weather_source() + str(city_link_id[0])
+        else:
+            result = False
         return result
 
     def get_dict_of_city_db(self):
         query = "select name, city_id from city;"
-        all_city = self.__execute_read_query(query)
+        all_city = self.__execute_read_query_all(query)
         result = dict(all_city)
         return result
+
+    def check_chat_id_db(self, chat_id: int):
+        query = "select exists (select * from favourite where chat_id = %(chat_id)s);"
+        parameter = {'chat_id': chat_id, }
+        result = self.__execute_read_query_one(query, parameter)[0]
+        return result
+
+    def get_favourite_list_db(self, chat_id: int):
+        query = "select city.name, city.city_id from favourite fav " \
+                "join city on city.city_id = fav.city_id " \
+                "where fav.chat_id = %(chat_id)s;"
+        parameter = {'chat_id': chat_id, }
+        favourite_list = self.__execute_read_query_all(query, parameter)
+        result = dict(favourite_list)
+        return result
+
+    def set_default_favourite_list_db(self, chat_id: int):
+        insert_query = "insert into favourite (chat_id, city_id) values" \
+                       "(%(chat_id)s, 59828)," \
+                       "(%(chat_id)s, 76628)," \
+                       "(%(chat_id)s, 622578)," \
+                       "(%(chat_id)s, 72223)," \
+                       "(%(chat_id)s, 17920);"
+        parameter = {'chat_id': chat_id, }
+        self.__execute_insert_query_one(insert_query, parameter)
+
