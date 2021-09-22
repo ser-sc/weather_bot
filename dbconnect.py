@@ -1,5 +1,5 @@
 import psycopg2
-from settings import get_weather_source, get_db_name, get_db_user_name, get_db_password, get_db_host, get_db_port
+from settings import get_db_name, get_db_user_name, get_db_password, get_db_host, get_db_port
 
 
 # Модуль установки конекшена с БД и выполнения запросов
@@ -47,18 +47,16 @@ class Database:
         try:
             self.__cursor.execute(query, parameters)
             self.__connection.commit()
-            result = True
-            return result
         except (Exception, psycopg2.DatabaseError) as error:
             print(f"Rollback transaction. The error '{error}' occurred.")
             self.__connection.rollback()
 
-    def get_city_link_db(self, city_name: str):
+    def get_city_id_db(self, city_name: str):
         query = "select city_id from city where lower(name) = %(city_name)s;"
         parameter = {'city_name': city_name.lower(), }
-        city_link_id = self.__execute_read_query_one(query, parameter)
-        if city_link_id is not None:
-            result = get_weather_source() + str(city_link_id[0])
+        city_id = self.__execute_read_query_one(query, parameter)
+        if city_id is not None:
+            result = str(city_id[0])
         else:
             result = False
         return result
@@ -72,6 +70,14 @@ class Database:
     def check_chat_id_db(self, chat_id: int):
         query = "select exists (select * from favourite where chat_id = %(chat_id)s);"
         parameter = {'chat_id': chat_id, }
+        result = self.__execute_read_query_one(query, parameter)[0]
+        return result
+
+    def check_city_in_favourite_db(self, chat_id: int, city_id: int):
+        query = "select exists (select * from favourite " \
+                "where chat_id = %(chat_id)s " \
+                "and city_id = %(city_id)s);"
+        parameter = {'chat_id': chat_id, 'city_id': city_id, }
         result = self.__execute_read_query_one(query, parameter)[0]
         return result
 
@@ -92,5 +98,20 @@ class Database:
                        "(%(chat_id)s, 72223)," \
                        "(%(chat_id)s, 17920);"
         parameter = {'chat_id': chat_id, }
+        self.__execute_insert_query_one(insert_query, parameter)
+
+    def set_city_to_favourite_db(self, chat_id: int, city_id: int):
+        insert_query = "insert into favourite (chat_id, city_id) values" \
+                       "(%(chat_id)s, %(city_id)s) " \
+                       "on conflict (chat_id, city_id) " \
+                       "do nothing;"
+        parameter = {'chat_id': chat_id, 'city_id': city_id, }
+        self.__execute_insert_query_one(insert_query, parameter)
+
+    def del_city_from_favourite_db(self, chat_id: int, city_id: int):
+        insert_query = "delete from favourite " \
+                       "where chat_id = %(chat_id)s " \
+                       "and city_id = %(city_id)s;"
+        parameter = {'chat_id': chat_id, 'city_id': city_id, }
         self.__execute_insert_query_one(insert_query, parameter)
 

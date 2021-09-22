@@ -25,27 +25,12 @@ psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-E
           REFERENCES city(city_id)
     );
 
-
-
     COMMENT ON TABLE city IS 'Справочник названий городов и ссылок на данные о погоде';
     COMMENT ON COLUMN city.city_id IS 'ИД города, первичный ключ, используется <ID> из https://meteo7.ru/forecast/<ID>';
     COMMENT ON COLUMN city.name IS 'Имя города, должно быть уникальным';
     COMMENT ON TABLE favourite IS 'Справочник скписка Избранных городов, которые будут в присутстввать в клавиатуре';
     COMMENT ON COLUMN favourite.chat_id IS 'ИД чата пользователя, для которого работает этот список Избранных городов';
     COMMENT ON COLUMN favourite.city_id IS 'ИД города, внешний ключ к таблице city';
-
-    --Устанавливаем значения по умолчанию.
-    --Значения повторяют те, что были в файле city.txt из предыдущей версии
-    INSERT INTO
-      city (city_id, name)
-    VALUES
-      (59828,'МШИНСКАЯ'),
-      (76628,'ПРИМОРСК'),
-      (622578,'ПОБЕДА'),
-      (72223,'ПЕТРОЗАВОДСК'),
-      (17920,'ВЫБОРГ')
-    ON CONFLICT (city_id)
-    DO NOTHING;
 
   COMMIT;
 EOSQL
