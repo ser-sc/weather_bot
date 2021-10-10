@@ -1,9 +1,6 @@
-from typing import Dict, Any
-
 import bs4
 import requests
 from telebot import types
-from settings import get_weather_source
 from dbconnect import Database
 from settings import get_weather_source
 
