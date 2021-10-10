@@ -1,8 +1,11 @@
+from typing import Dict, Any
+
 import bs4
 import requests
 from telebot import types
 from settings import get_weather_source
 from dbconnect import Database
+from settings import get_weather_source
 
 # Модуль содержит методы, которые возвращают данные для бота, после обращения к БД
 # Все обращения к БД выполняются в рамках методов этого модуля и не выносятся наружу
