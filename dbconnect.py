@@ -62,7 +62,7 @@ class Database:
         return result
 
     def get_dict_of_city_db(self):
-        query = "select name, city_id from city;"
+        query = "select name, city_id from city order by name;"
         all_city = self.__execute_read_query_all(query)
         result = dict(all_city)
         return result
@@ -84,7 +84,8 @@ class Database:
     def get_favourite_list_db(self, chat_id: int):
         query = "select city.name, city.city_id from favourite fav " \
                 "join city on city.city_id = fav.city_id " \
-                "where fav.chat_id = %(chat_id)s;"
+                "where fav.chat_id = %(chat_id)s " \
+                "order by city.name;"
         parameter = {'chat_id': chat_id, }
         favourite_list = self.__execute_read_query_all(query, parameter)
         result = dict(favourite_list)
